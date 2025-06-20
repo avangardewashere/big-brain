@@ -10,10 +10,21 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.22.0",
+    "@radix-ui/react-slot": "^1.2.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "convex": "^1.24.8",
-    "next": "14.2.3",
+    "lucide-react": "^0.518.0",
+    "next": "^14.2.25",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7"
+  },
+  "overrides": {
+    "@clerk/nextjs": {
+      "next": "14.2.25"
+    }
   },
   "devDependencies": {
     "@types/node": "^20",
