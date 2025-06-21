@@ -17,8 +17,11 @@ import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Loader2 } from "lucide-react";
+import { LoadingButton } from "@/components/loading-button";
+import { Id } from "@/convex/_generated/dataModel";
 const formSchema = z.object({
   title: z.string().min(1).max(250),
+  file: z.instanceof(File),
 });
 
 export default function UploadDocumentForm({
@@ -27,10 +30,19 @@ export default function UploadDocumentForm({
   onUpload: () => void;
 }) {
   const createDocument = useMutation(api.documents.createDocument);
+    const generateUploadURL = useMutation(api.documents.generateUploadURL);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    await createDocument({ title: values.title });
+      const url = await generateUploadURL()
+      console.log("URL:", url)
+
+      const result = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": values?.file?.type },
+          body:values?.file,
+      })
+      const { storageId} = await result.json()
+     await createDocument({ title: values.title,fileId:storageId as Id<"_storage"> });
     onUpload();
   }
 
@@ -60,10 +72,34 @@ export default function UploadDocumentForm({
             </FormItem>
           )}
         />
-              <Button disabled={form.formState.isSubmitting} type="submit">
-          {form.formState.isSubmitting && <Loader2 className="animate-spin" />}
-          Submit
-        </Button>
+
+        <FormField
+          control={form.control}
+          name="file"
+          render={({ field: { value, onChange, ...fieldProps } }) => (
+            <FormItem>
+              <FormLabel>File</FormLabel>
+              <FormControl>
+                      <Input accept=".txt,.xml,.jpeg,.png,.doc,.jpg" type="file" {...fieldProps} onChange={(e)=> {
+                          const file = e?.target?.files?.[0]
+                          
+                          onChange(file)
+                      }} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <LoadingButton
+          loadingText="Uploading..."
+          isLoading={form.formState.isSubmitting}
+        >
+          Upload
+        </LoadingButton>
       </form>
     </Form>
   );

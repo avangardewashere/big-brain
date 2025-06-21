@@ -11,7 +11,7 @@ export default function Home() {
   const documents = useQuery(api.documents.getDocuments);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 space-y-8">
+    <main className="!bg-black flex min-h-screen flex-col items-center justify-between p-24 space-y-8">
       <div className=" w-full flex justify-between items-center">
         <h1 className="text-4xl font-bold">My Documents</h1>
        <CreateDocumentButton /> 
